@@ -32,7 +32,12 @@ define(function(require) {
         onContentObjectMenuClicked: function(event) {
             if(event && event.preventDefault) event.preventDefault();
             if(this.model.get('_isLocked')) return;
-            Backbone.history.navigate('#/id/' + $(event.currentTarget).data("href"), {trigger: true});
+            //to prevent any "flicker" and drawer content disappearing before drawer is closed
+            //put navigate code inside the "once"
+            Adapt.once('drawer:closed', function() {
+                Backbone.history.navigate('#/id/' + $(event.currentTarget).data("href"), {trigger: true});
+            });
+            Adapt.trigger('drawer:closeDrawer');
         }
     });
 
